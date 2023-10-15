@@ -1,5 +1,5 @@
-package application;
+package application.controller;
 
 public class SampleController {
-	
+
 }

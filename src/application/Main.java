@@ -25,3 +25,19 @@ public class Main extends Application {
 		launch(args);
 	}
 }
+
+/*To-Do
+ * 1. Create the file/folder system
+ * 2. Create database for highscores
+ * 3. Create player class
+ * 4. create snake piece class
+ * 5. create database connection class
+ * 6. create main window
+ * 6. create Game window
+ * 7. create HighScore window
+ * 8. create main window controller for different button events
+ * 9. create Snake controller   
+ * 
+ * 
+ * 
+ */

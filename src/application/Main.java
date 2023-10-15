@@ -28,12 +28,12 @@ public class Main extends Application {
 }
 
 /*To-Do
- * 1. Create the file/folder system
+ * 1. Create the file/folder system  - done
  * 2. Create database for highscores -- Done
  * 3. Create player class
  * 4. create snake piece class
  * 5. create database connection class
- * 6. create main window
+ * 6. create main window  -- done
  * 6. create Game window
  * 7. create HighScore window
  * 8. create main window controller for different button events

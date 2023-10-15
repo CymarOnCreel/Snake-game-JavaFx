@@ -6,7 +6,11 @@ import java.util.ResourceBundle;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Alert.AlertType;
+import javafx.stage.Stage;
 
 public class MainWindowController implements Initializable{
 
@@ -28,13 +32,28 @@ public class MainWindowController implements Initializable{
 		System.out.println("Test credits button");
 	}
 	@FXML private void exit(Event event) {
-		//TO-DO change showHighScores view
-		System.out.println("Test exit button");
+		showAlert("Exit Game", "Do You Really Wnat To Exit The Game :(");
 	}
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		// TODO Auto-generated method stub
+		
+	}
+	
+	public void showAlert(String title, String message) {
+		Alert alert= new Alert(AlertType.CONFIRMATION);
+		alert.setTitle(title);
+		alert.setHeaderText("");
+		alert.setContentText(message);
+		Stage alertStage = (Stage) alert.getDialogPane().getScene().getWindow();
+		alertStage.setAlwaysOnTop(true);
+		alert.showAndWait();
+		if(alert.getResult()==ButtonType.OK) {
+			System.exit(0);
+		} else {
+			alert.close();
+		}
 		
 	}
 

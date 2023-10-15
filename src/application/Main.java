@@ -11,9 +11,10 @@ public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		try {
-			GridPane root = (GridPane)FXMLLoader.load(getClass().getResource("Sample.fxml"));
+			primaryStage.setTitle("Snake Game");
+			GridPane root = (GridPane)FXMLLoader.load(getClass().getResource("/application/view/MainWindow.fxml"));
 			Scene scene = new Scene(root,400,400);
-			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+			scene.getStylesheets().add(getClass().getResource("/application/view/application.css").toExternalForm());
 			primaryStage.setScene(scene);
 			primaryStage.show();
 		} catch(Exception e) {
@@ -28,7 +29,7 @@ public class Main extends Application {
 
 /*To-Do
  * 1. Create the file/folder system
- * 2. Create database for highscores
+ * 2. Create database for highscores -- Done
  * 3. Create player class
  * 4. create snake piece class
  * 5. create database connection class

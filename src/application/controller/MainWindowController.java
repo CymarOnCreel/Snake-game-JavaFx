@@ -46,8 +46,8 @@ public class MainWindowController implements Initializable{
 	    } catch (IOException e) {
 	        e.printStackTrace();
 	    }
-		System.out.println("Test play button");
 	}
+	
 	@FXML private void showHighScores(Event event) {
 		//TO-DO change showHighScores view
 		System.out.println("Test highScores button");

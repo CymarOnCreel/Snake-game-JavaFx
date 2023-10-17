@@ -8,10 +8,9 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-
-<SplitPane dividerPositions="0.0" orientation="VERTICAL" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controller.GameWindowController">
+<SplitPane fx:id="fullGameWindow" dividerPositions="0.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" orientation="VERTICAL" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controller.GameWindowController">
    <items>
-      <Pane prefHeight="80.0" prefWidth="500.0" styleClass="main-window-style" stylesheets="@application.css">
+      <Pane fx:id="gameTextsWindow" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="main-window-style" stylesheets="@application.css">
          <children>
             <Label layoutX="6.0" layoutY="26.0" prefHeight="28.0" prefWidth="190.0" styleClass="main-window-style" text="Player:">
                <font>
@@ -25,11 +24,13 @@
             </Label>
          </children>
       </Pane>
-      <GridPane fx:id="gameWindow" gridLinesVisible="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="500.0" styleClass="main-window-style" stylesheets="@application.css">
+      <GridPane fx:id="gameWindow" gridLinesVisible="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onKeyPressed="#changeDirection" styleClass="main-window-style" stylesheets="@application.css">
          <columnConstraints>
+            <ColumnConstraints />
             <ColumnConstraints />
          </columnConstraints>
          <rowConstraints>
+            <RowConstraints />
             <RowConstraints />
          </rowConstraints>
       </GridPane>

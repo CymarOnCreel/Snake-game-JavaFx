@@ -46,6 +46,7 @@ public class MainWindowController implements Initializable {
 			SplitPane gameWindowRoot = (SplitPane) loader.load();
 			gameWindowRootController = loader.getController();	
 			Stage gameStage = new Stage();
+			gameWindowRootController.stage = gameStage;
 			Scene gameWindowScene = new Scene(gameWindowRoot);
 			gameStage.setScene(gameWindowScene);
 			gameStage.setTitle("Let's Play");

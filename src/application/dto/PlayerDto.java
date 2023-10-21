@@ -45,6 +45,12 @@ public class PlayerDto {
 	public int getPlayerScore() {
 		return playerScore;
 	}
+	
+	
+
+	public void setPlayerScore(int playerScore) {
+		this.playerScore = playerScore;
+	}
 
 	@Override
 	public String toString() {

@@ -4,6 +4,7 @@ import java.net.URL;
 import java.util.LinkedList;
 import java.util.ResourceBundle;
 
+import application.dto.AppleDto;
 import application.dto.SnakePiece;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -18,6 +19,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
@@ -33,24 +35,59 @@ public class GameWindowController implements Initializable {
 	final double gridWidth = 800;
 	final double paneHeightForTexts = 80;
 	final int gameSpeed = 500;
-	final int columnCount = (int) gridWidth / 20;
-	final int rowCount = (int) gridHeight / 20;
-	private int xDirection = 0;
+	final int boxSizeInGrid=20;
+	final int columnCount = (int) gridWidth / boxSizeInGrid;
+	final int rowCount = (int) gridHeight / boxSizeInGrid;
+	private int xDirection = 0; 
 	private int yDirection = -1;
 	private int xSnakeStartingPosition = 10;
 	private int ySnakeStartingPosition = 10;
 	private int snakeSize = 7;
 	private LinkedList<SnakePiece> snakeBody;
+	private AppleDto apple;
+	private int countApple=0;
 
+	@Override
+	public void initialize(URL location, ResourceBundle resources) {
+		setGameWindowUp();
+		playGame();
+	
+
+	}
+	
+	public void playGame() {
+		snakeBody = createSnakeBodyList(xSnakeStartingPosition, ySnakeStartingPosition, snakeSize);
+		creatingSnakeBody(gameWindow, snakeBody, snakeSize);
+		createFoodAtRandomPosition(gameWindow, snakeBody);
+		gameWindow.setFocusTraversable(true);
+		gameWindow.setOnKeyPressed(event -> {
+			handleKeyPress(event.getCode());
+		});
+
+		Timeline timeline = new Timeline(new KeyFrame(Duration.millis(gameSpeed), event -> {
+			moveSnake(gameWindow);
+		}));
+		timeline.setCycleCount(Timeline.INDEFINITE);
+		timeline.play();
+	}
+	
+	// Setting up methods for Game window 
+	public void setGameWindowUp() {
+		fullGameWindow.setPrefSize(gridWidth, gridHeight + paneHeightForTexts);
+		gameTextsWindow.setPrefSize(gridWidth, paneHeightForTexts);
+		gameWindow.setPrefSize(gridWidth, gridHeight);
+		createTheGridPaneWithColumnsAndRows(gameWindow);
+		fillGridPaneWithBlackRectangles(gameWindow, rowCount, columnCount);
+	}
 	public void createTheGridPaneWithColumnsAndRows(GridPane root) {
 		for (int i = 0; i < rowCount; i++) {
 			RowConstraints row = new RowConstraints();
-			row.setPrefHeight(20.0);
+			row.setPrefHeight(boxSizeInGrid);
 			root.getRowConstraints().add(row);
 		}
 		for (int i = 0; i < columnCount; i++) {
 			ColumnConstraints col = new ColumnConstraints();
-			col.setPrefWidth(20.0);
+			col.setPrefWidth(boxSizeInGrid);
 			root.getColumnConstraints().add(col);
 		}
 	}
@@ -58,21 +95,22 @@ public class GameWindowController implements Initializable {
 	public void fillGridPaneWithBlackRectangles(GridPane root, int rowCount, int columnCount) {
 		for (int i = 0; i < rowCount; i++) {
 			for (int j = 0; j < columnCount; j++) {
-				Rectangle rect = new Rectangle(20, 20);
+				Rectangle rect = new Rectangle(boxSizeInGrid, boxSizeInGrid);
 				rect.setFill(Color.BLACK);
 				root.add(rect, i, j);
 			}
 		}
 	}
 
+	// Methods for Snake creating and movement
 	public Rectangle creatingSnakeBodyPiece() {
-		Rectangle rect = new Rectangle(20, 20);
+		Rectangle rect = new Rectangle(boxSizeInGrid,boxSizeInGrid);
 		rect.setFill(Color.GREEN);
 		return rect;
 	}
 
 	public Rectangle eraseSnakeBodyPiece() {
-		Rectangle rect = new Rectangle(20, 20);
+		Rectangle rect = new Rectangle(boxSizeInGrid, boxSizeInGrid);
 		rect.setFill(Color.BLACK);
 		return rect;
 	}
@@ -102,7 +140,6 @@ public class GameWindowController implements Initializable {
 		snakeBody.addFirst(head);
 
 		Platform.runLater(() -> {
-
 			root.add(creatingSnakeBodyPiece(), newHeadX, newHeadY);
 			SnakePiece tail = snakeBody.removeLast();
 			Rectangle erasePart = eraseSnakeBodyPiece();
@@ -110,13 +147,7 @@ public class GameWindowController implements Initializable {
 		});
 	}
 
-	public void setGameWindowUp() {
-		fullGameWindow.setPrefSize(gridWidth, gridHeight + paneHeightForTexts);
-		gameTextsWindow.setPrefSize(gridWidth, paneHeightForTexts);
-		gameWindow.setPrefSize(gridWidth, gridHeight);
-		createTheGridPaneWithColumnsAndRows(gameWindow);
-		fillGridPaneWithBlackRectangles(gameWindow, rowCount, columnCount);
-	}
+	
 
 	@FXML
 	public void changeDirection(KeyEvent event) {
@@ -138,24 +169,16 @@ public class GameWindowController implements Initializable {
 			yDirection = 0;
 		}
 	}
-
-	@Override
-	public void initialize(URL location, ResourceBundle resources) {
-		setGameWindowUp();
-
-		snakeBody = createSnakeBodyList(xSnakeStartingPosition, ySnakeStartingPosition, snakeSize);
-		creatingSnakeBody(gameWindow, snakeBody, snakeSize);
-
-		gameWindow.setFocusTraversable(true);
-		gameWindow.setOnKeyPressed(event -> {
-			handleKeyPress(event.getCode());
-		});
-
-		Timeline timeline = new Timeline(new KeyFrame(Duration.millis(gameSpeed), event -> {
-			moveSnake(gameWindow);
-		}));
-		timeline.setCycleCount(Timeline.INDEFINITE);
-		timeline.play();
-
+// creating apple for snake to eat
+	public void createFoodAtRandomPosition(GridPane root, LinkedList<SnakePiece> snake) {
+		int appleX=15;
+		int appleY=15;
+		AppleDto apple=new AppleDto(appleX, appleY);
+		root.add(createAppleShape(), appleX, appleY);
+	}
+		
+	public Circle createAppleShape() {
+		Circle appleShape =new Circle(boxSizeInGrid/2, Color.RED);
+		return appleShape;
 	}
 }

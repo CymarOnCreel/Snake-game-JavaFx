@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+
+<ScrollPane fx:id="highScores" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="285.0" prefWidth="383.0" styleClass="table-highScore-style" stylesheets="@application.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controller.HighScoresWindowController">
+   <content>
+      <TableView fx:id="highScoresTable" prefHeight="280.0" prefWidth="381.0" styleClass="table-highScore-style" stylesheets="@application.css">
+        <columns>
+          <TableColumn fx:id="position" editable="false" prefWidth="75.0" resizable="false" sortable="false" styleClass="table-highScore-style" text="Position" />
+          <TableColumn fx:id="playerName" editable="false" prefWidth="155.0" sortable="false" styleClass="table-highScore-style" text="Player_Name" />
+            <TableColumn fx:id="playerHighScore" editable="false" prefWidth="148.0" sortType="DESCENDING" styleClass="table-highScore-style" text="HighScore" />
+        </columns>
+      </TableView>
+   </content>
+</ScrollPane>

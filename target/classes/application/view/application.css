@@ -1,4 +1,13 @@
 .main-window-style{
 	-fx-background-color: black;
 	-fx-text-fill: white;
+	-fx-font-family: "Retro Gaming";
 }
+.table-highScore-style{
+	-fx-background-color: orange;
+	-fx-text-fill: black;
+	-fx-font-family: "Retro Gaming";
+	-fx-font-size: 16.0px;
+	-fx-alignment: center;
+}
+

@@ -4,7 +4,6 @@ import java.net.URL;
 import java.util.LinkedList;
 import java.util.Random;
 import java.util.ResourceBundle;
-
 import application.dao.PlayerDao;
 import application.dto.Apple;
 import application.dto.Player;
@@ -70,7 +69,7 @@ public class GameWindowController implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		
+
 		getPlayerName();
 		initializeVariablesForGameStart();
 		setGameWindowUp();
@@ -120,8 +119,7 @@ public class GameWindowController implements Initializable {
 		Platform.runLater(() -> {
 			playerDao.save(player);
 			showAlertOnGameFinish("Játék Vége", "Kedves " + playerName + " összesen " + score + " pontot értél el");
-			System.out.println(stage);
-			
+
 		});
 
 		if (timeline != null) {
@@ -129,8 +127,8 @@ public class GameWindowController implements Initializable {
 
 		}
 		if (stage != null) {
-	        stage.close();  
-	    }
+			stage.close();
+		}
 	}
 
 	public void music() {

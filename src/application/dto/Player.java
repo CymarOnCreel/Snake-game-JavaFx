@@ -20,6 +20,11 @@ public class Player {
 	
 	@Column(name="player_score")
 	private int playerScore;
+	
+
+	public Player() {
+	
+	}
 
 	public Player(int id, String playerName, int playerScore) {
 		super();

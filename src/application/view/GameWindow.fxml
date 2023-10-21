@@ -12,7 +12,7 @@
    <items>
       <Pane fx:id="gameTextsWindow" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="main-window-style" stylesheets="@application.css">
          <children>
-            <Label fx:id="lblPlayerName" layoutX="6.0" prefHeight="54.0" prefWidth="190.0" styleClass="main-window-style" text="Player:">
+            <Label fx:id="lblPlayerName" contentDisplay="CENTER" layoutX="6.0" prefHeight="54.0" prefWidth="190.0" styleClass="main-window-style" text="Player:">
                <font>
                   <Font name="Retro Gaming" size="22.0" />
                </font>

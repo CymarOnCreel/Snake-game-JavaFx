@@ -10,6 +10,8 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
 import application.dto.Player;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 public class PlayerDao implements ICrud {
 	EntityManagerFactory factory = Persistence.createEntityManagerFactory("highScores");
@@ -44,13 +46,13 @@ public class PlayerDao implements ICrud {
 	}
 
 	@Override
-	public List<Player> getAll() {
+	public ObservableList<Player> getAll() {
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 		CriteriaQuery<Player> cq=cb.createQuery(Player.class);
 		Root<Player> rootEntry= cq.from(Player.class);
 		cq.select(rootEntry);
-		List<Player> players=entityManager.createQuery(cq).getResultList();
-		return players;
+	    List<Player> players = entityManager.createQuery(cq).getResultList();
+	    return FXCollections.observableArrayList(players);
 	}
 
 }

@@ -2,6 +2,7 @@ package application.controller;
 
 import java.net.URL;
 import java.util.LinkedList;
+import java.util.Random;
 import java.util.ResourceBundle;
 
 import application.dto.AppleDto;
@@ -11,6 +12,7 @@ import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -31,24 +33,28 @@ public class GameWindowController implements Initializable {
 	private GridPane gameWindow;
 	@FXML
 	Pane gameTextsWindow;
+	@FXML
+	Label lblHighScore;
 	final double gridHeight = 800;
 	final double gridWidth = 800;
 	final double paneHeightForTexts = 80;
-	final int gameSpeed = 500;
+	final int gameSpeed=300;
 	final int boxSizeInGrid=20;
 	final int columnCount = (int) gridWidth / boxSizeInGrid;
 	final int rowCount = (int) gridHeight / boxSizeInGrid;
-	private int xDirection = 0; 
-	private int yDirection = -1;
-	private int xSnakeStartingPosition = 10;
-	private int ySnakeStartingPosition = 10;
-	private int snakeSize = 7;
+	final int xSnakeStartingPosition=10;
+	final int ySnakeStartingPosition=10;
+	private int xDirection; 
+	private int yDirection;
+	private int snakeSize;
 	private LinkedList<SnakePiece> snakeBody;
 	private AppleDto apple;
-	private int countApple=0;
+	private int life;
+	private int score;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		initializeVariablesForGameStart();
 		setGameWindowUp();
 		playGame();
 	
@@ -58,19 +64,25 @@ public class GameWindowController implements Initializable {
 	public void playGame() {
 		snakeBody = createSnakeBodyList(xSnakeStartingPosition, ySnakeStartingPosition, snakeSize);
 		creatingSnakeBody(gameWindow, snakeBody, snakeSize);
-		createFoodAtRandomPosition(gameWindow, snakeBody);
+		createFoodAtRandomPosition(snakeBody);
 		gameWindow.setFocusTraversable(true);
 		gameWindow.setOnKeyPressed(event -> {
 			handleKeyPress(event.getCode());
 		});
-
 		Timeline timeline = new Timeline(new KeyFrame(Duration.millis(gameSpeed), event -> {
 			moveSnake(gameWindow);
-		}));
+			if(didSnakeEatApple(snakeBody, apple)) {
+				relocateAppleOnGrid(snakeBody, apple);
+				score=updateScore(score);
+				System.out.println(apple);
+				changeHighScoreDisplay();
+			}
+		})
+		);
 		timeline.setCycleCount(Timeline.INDEFINITE);
 		timeline.play();
 	}
-	
+
 	// Setting up methods for Game window 
 	public void setGameWindowUp() {
 		fullGameWindow.setPrefSize(gridWidth, gridHeight + paneHeightForTexts);
@@ -78,6 +90,14 @@ public class GameWindowController implements Initializable {
 		gameWindow.setPrefSize(gridWidth, gridHeight);
 		createTheGridPaneWithColumnsAndRows(gameWindow);
 		fillGridPaneWithBlackRectangles(gameWindow, rowCount, columnCount);
+	}
+	
+	public void initializeVariablesForGameStart() {
+		life=3;
+		snakeSize=7;
+		score =0;
+		xDirection = 0; 
+		yDirection = -1;
 	}
 	public void createTheGridPaneWithColumnsAndRows(GridPane root) {
 		for (int i = 0; i < rowCount; i++) {
@@ -170,15 +190,57 @@ public class GameWindowController implements Initializable {
 		}
 	}
 // creating apple for snake to eat
-	public void createFoodAtRandomPosition(GridPane root, LinkedList<SnakePiece> snake) {
-		int appleX=15;
-		int appleY=15;
-		AppleDto apple=new AppleDto(appleX, appleY);
-		root.add(createAppleShape(), appleX, appleY);
+	public void createFoodAtRandomPosition(LinkedList<SnakePiece> snake) {
+		
+		do {
+			createRandomPositionForApple();
+		} while (!isApllePositionNotOnSnake(snake, apple));
+			gameWindow.add(createAppleShape(), apple.getxPosition(),apple.getyPosition());
 	}
 		
-	public Circle createAppleShape() {
+	private AppleDto createRandomPositionForApple() {
+		Random ranNum=new Random();
+		int appleX=ranNum.nextInt(columnCount)+1;
+		int appleY=ranNum.nextInt(rowCount)+1;
+		apple=new AppleDto(appleX, appleY);
+		return apple;
+	}
+	private boolean isApllePositionNotOnSnake(LinkedList<SnakePiece> snake, AppleDto apple) {
+		boolean isAppleSpotGood=true;
+		for (SnakePiece snakePiece : snake) {
+			if (snakePiece.getxPosition()==apple.getxPosition()
+					&&snakePiece.getyPosition()==apple.getyPosition()) isAppleSpotGood=false;
+		}
+		return isAppleSpotGood;
+	}
+	private Circle createAppleShape() {
 		Circle appleShape =new Circle(boxSizeInGrid/2, Color.RED);
 		return appleShape;
+	}
+	
+	private void relocateAppleOnGrid(LinkedList<SnakePiece> snake,AppleDto apple) {
+		if(didSnakeEatApple(snake, apple)) {
+			gameWindow.getChildren().remove(apple);
+			createFoodAtRandomPosition(snake);
+		}
+	}
+	
+	//set up methods for score
+	private boolean didSnakeEatApple(LinkedList<SnakePiece> snake, AppleDto apple) {
+		boolean didSnakeEatApple=false;
+		for (SnakePiece snakePiece : snake) {
+			if(snakePiece.getxPosition()==apple.getxPosition()
+					&&snakePiece.getyPosition()==apple.getyPosition()) didSnakeEatApple=true;
+		}
+		return didSnakeEatApple;
+	}
+	
+	private int updateScore(int score) {
+		score+=100;	
+		return	score;
+	}
+	
+	public void changeHighScoreDisplay() {
+		lblHighScore.setText("HighScore: "+score);
 	}
 }

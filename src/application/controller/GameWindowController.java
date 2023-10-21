@@ -5,19 +5,17 @@ import java.util.LinkedList;
 import java.util.Random;
 import java.util.ResourceBundle;
 
-import application.dto.AppleDto;
+import application.dao.PlayerDao;
+import application.dto.Apple;
+import application.dto.Player;
 import application.dto.SnakePiece;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
@@ -28,7 +26,6 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.RowConstraints;
-import javafx.scene.layout.TilePane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
@@ -47,10 +44,10 @@ public class GameWindowController implements Initializable {
 	Label lblHighScore;
 	@FXML 
 	Label lblPlayerName;
-	final double gridHeight = 800;
-	final double gridWidth = 800;
+	final double gridHeight = 400;
+	final double gridWidth = 400;
 	final double paneHeightForTexts = 80;
-	final int gameSpeed = 300;
+	final int gameSpeed = 200;
 	final int boxSizeInGrid = 20;
 	final int columnCount = (int) gridWidth / boxSizeInGrid;
 	final int rowCount = (int) gridHeight / boxSizeInGrid;
@@ -60,33 +57,45 @@ public class GameWindowController implements Initializable {
 	private int yDirection;
 	private int snakeSize;
 	private LinkedList<SnakePiece> snakeBody;
-	private AppleDto apple;
+	private Apple apple;
 	private int score;
 	private Stage stage;
 	private Timeline timeline;
 	private boolean isGameRunning;
+	public Player player;
+	private String playerName;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		 TextInputDialog nameInput = new TextInputDialog();
-		    nameInput.setTitle("Enter you name");
-		    nameInput.setHeaderText(null);
-		    nameInput.setContentText("Player Name: ");
+		 TextInputDialog playerNameTextInput = new TextInputDialog();
+		    playerNameTextInput.setTitle("Enter you name");
+		    playerNameTextInput.setHeaderText(null);
+		    playerNameTextInput.setContentText("Player Name: ");
 
-		    nameInput.showAndWait().ifPresent(name -> {
-		        String playerName = name.isEmpty() ? "Player" : name;
+		    playerNameTextInput.showAndWait().ifPresent(name -> {
+		        playerName = name.isEmpty() ? "Player" : name;
 		        lblPlayerName.setText("Player: "+playerName);
 		        initializeVariablesForGameStart();
 		        setGameWindowUp();
 		        playGame();
+		       
 		    });
 		}
 
 	public void handleCloseWindow() {
 		isGameRunning = false;
+		player = new Player(playerName, score);
+		PlayerDao playerDao=new PlayerDao();
+		
+	    Platform.runLater(() -> {
+	        showAlertOnGameFinish("Játék Vége", "Kedves " + playerName + " összesen " + score + " pontot értél el");
+	    playerDao.save(player);
+	    });
+	    
 		if (timeline != null) {
 			timeline.stop();
 		}
+		
 	}
 
 	public void playGame() {
@@ -104,11 +113,10 @@ public class GameWindowController implements Initializable {
 			}
 			if (didSnakeHitWall(snakeBody) || didSnakeHitHimself(snakeBody))
 				handleCloseWindow();
-
 		}));
 		timeline.setCycleCount(Timeline.INDEFINITE);
 		timeline.play();
-
+		
 	}
 
 // setting game logic methods
@@ -264,15 +272,15 @@ public class GameWindowController implements Initializable {
 		gameWindow.add(createAppleShape(), apple.getxPosition(), apple.getyPosition());
 	}
 
-	private AppleDto createRandomPositionForApple() {
+	private Apple createRandomPositionForApple() {
 		Random ranNum = new Random();
 		int appleX = ranNum.nextInt(columnCount) + 1;
 		int appleY = ranNum.nextInt(rowCount) + 1;
-		apple = new AppleDto(appleX, appleY);
+		apple = new Apple(appleX, appleY);
 		return apple;
 	}
 
-	private boolean isApllePositionNotOnSnake(LinkedList<SnakePiece> snake, AppleDto apple) {
+	private boolean isApllePositionNotOnSnake(LinkedList<SnakePiece> snake, Apple apple) {
 		boolean isAppleSpotGood = true;
 		for (SnakePiece snakePiece : snake) {
 			if (snakePiece.getxPosition() == apple.getxPosition() && snakePiece.getyPosition() == apple.getyPosition())
@@ -286,7 +294,7 @@ public class GameWindowController implements Initializable {
 		return appleShape;
 	}
 
-	private void relocateAppleOnGrid(LinkedList<SnakePiece> snake, AppleDto apple) {
+	private void relocateAppleOnGrid(LinkedList<SnakePiece> snake, Apple apple) {
 		if (didSnakeEatApple(snake, apple)) {
 			gameWindow.getChildren().remove(apple);
 			createFoodAtRandomPosition(snake);
@@ -294,7 +302,7 @@ public class GameWindowController implements Initializable {
 	}
 
 	// set up methods for score
-	private boolean didSnakeEatApple(LinkedList<SnakePiece> snake, AppleDto apple) {
+	private boolean didSnakeEatApple(LinkedList<SnakePiece> snake, Apple apple) {
 		boolean didSnakeEatApple = false;
 		for (SnakePiece snakePiece : snake) {
 			if (snakePiece.getxPosition() == apple.getxPosition() && snakePiece.getyPosition() == apple.getyPosition())
@@ -311,19 +319,18 @@ public class GameWindowController implements Initializable {
 	public void changeHighScoreDisplay() {
 		lblHighScore.setText("HighScore: " + score);
 	}
-	//
-//	public void showAlertToGetPlayerName(String title, String message) {
-//		Alert alert = new Alert(AlertType.CONFIRMATION);
-//		alert.setTitle(title);
-//		alert.setHeaderText("");
-//		alert.setContentText(message);
-//		Stage alertStage = (Stage) alert.getDialogPane().getScene().getWindow();
-//		alertStage.setAlwaysOnTop(true);
-//		alert.showAndWait();
-//		if (alert.getResult() == ButtonType.OK) {
-//			System.exit(0);
-//		} else {
-//			alert.close();
-//		}
-//	}
+	
+	public void showAlertOnGameFinish(String title, String message) {
+		Alert alert = new Alert(AlertType.INFORMATION);
+		alert.setTitle(title);
+		alert.setHeaderText("");
+		alert.setContentText(message);
+		Stage alertStage = (Stage) alert.getDialogPane().getScene().getWindow();
+		alertStage.setAlwaysOnTop(true);
+		alert.showAndWait();
+		if (alert.getResult() == ButtonType.OK) {
+			System.out.println("save to database");
+			//TODO save to database name and score
+		}
+	}
 }

@@ -1,10 +1,10 @@
 package application.dto;
 
-public class AppleDto {
+public class Apple {
 	private int xPosition;
 	private int yPosition;
 	
-	public AppleDto(int xPosition, int yPosition) {
+	public Apple(int xPosition, int yPosition) {
 		
 		this.xPosition = xPosition;
 		this.yPosition = yPosition;
